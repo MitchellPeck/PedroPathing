@@ -60,6 +60,7 @@ public class PinpointLocalizer extends Localizer {
     private NanoTimer timer;
     private Pose currentVelocity;
     private Pose pinpointPose;
+    private boolean pinpointCooked = false;
 
     /**
      * This creates a new PinpointLocalizer from a HardwareMap, with a starting Pose at (0,0)
@@ -164,6 +165,7 @@ public class PinpointLocalizer extends Localizer {
     public void setPose(Pose setPose) {
         odo.setPosition(new Pose2D(DistanceUnit.INCH, setPose.getX(), setPose.getY(), AngleUnit.RADIANS, setPose.getHeading()));
         pinpointPose = setPose;
+        previousHeading = setPose.getHeading();
     }
 
     /**
@@ -174,8 +176,7 @@ public class PinpointLocalizer extends Localizer {
         deltaTimeNano = timer.getElapsedTime();
         timer.resetTimer();
         odo.update();
-        Pose2D pinpointPose2D = odo.getPosition();
-        Pose currentPinpointPose = new Pose(pinpointPose2D.getX(DistanceUnit.INCH), pinpointPose2D.getY(DistanceUnit.INCH), pinpointPose2D.getHeading(AngleUnit.RADIANS));
+        Pose currentPinpointPose = getPoseEstimate(odo.getPosition(), pinpointPose, deltaTimeNano);
         totalHeading += MathFunctions.getSmallestAngleDifference(currentPinpointPose.getHeading(), previousHeading);
         previousHeading = currentPinpointPose.getHeading();
         Pose deltaPose = MathFunctions.subtractPoses(currentPinpointPose, pinpointPose);
@@ -237,12 +238,6 @@ public class PinpointLocalizer extends Localizer {
     @Override
     public void resetIMU() throws InterruptedException {
         odo.recalibrateIMU();
-
-        try {
-            Thread.sleep(300);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     /**
@@ -256,5 +251,26 @@ public class PinpointLocalizer extends Localizer {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private Pose getPoseEstimate(Pose2D pinpointEstimate, Pose currentPose, long deltaTime) {
+        if (Double.isNaN(pinpointEstimate.getX(DistanceUnit.INCH)) || Double.isNaN(pinpointEstimate.getY(DistanceUnit.INCH)) || Double.isNaN(pinpointEstimate.getHeading(AngleUnit.RADIANS))) {
+            pinpointCooked = true;
+            return MathFunctions.addPoses(currentPose, new Pose(currentVelocity.getX() * deltaTime / Math.pow(10, 9), currentVelocity.getY() * deltaTime / Math.pow(10, 9), currentVelocity.getHeading() * deltaTime / Math.pow(10, 9)));
+        }
+
+        Pose estimate = new Pose(pinpointEstimate.getX(DistanceUnit.INCH), pinpointEstimate.getY(DistanceUnit.INCH), pinpointEstimate.getHeading(AngleUnit.RADIANS));
+
+        pinpointCooked = false;
+        return estimate;
+    }
+
+    /**
+     * This returns whether if any component of robot's position is NaN.
+     *
+     * @return returns whether the robot's position is NaN
+     */
+    public boolean isNAN() {
+        return pinpointCooked;
     }
 }

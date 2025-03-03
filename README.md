@@ -18,7 +18,7 @@ Follow the steps on our [website](https://pedropathing.com/) to setup your proje
 Library: https://github.com/Pedro-Pathing/PedroPathing/releases/tag/v1.0.3
 Quickstart: https://github.com/Pedro-Pathing/Quickstart/releases/tag/v1.0.3
 
-- Fixed a bug that caused follower constants to be updated by user input AFTER follower was already created, causing hardwareMap issues.
+- Fixed a  bug that caused follower constants to be updated by user input AFTER follower was already created, causing hardwareMap issues.
 - Removed 2 Parameters from Follower and PoseUpdater (two classes), now you have to call `Constants.setConstants(FConstants.class, LConstants.class);` before initalizing the Follower.
 - Added Power Caching
 

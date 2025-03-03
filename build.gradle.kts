@@ -28,6 +28,18 @@ tasks.named<org.jetbrains.dokka.gradle.DokkaTask>("dokkaJavadoc") {
 	}
 }
 
+tasks.dokkaHtml {
+	dokkaSourceSets {
+		named("main") {
+			perPackageOption {
+				matchingRegex.set("com\\.acmerobotics\\.roadrunner\\.ftc.*")
+				suppress.set(true) // Exclude this package
+			}
+		}
+	}
+}
+
+
 val defaultMinSdkVersion by extra(29)
 val defaultMinSdkVersion1 by extra(23)
 
@@ -62,17 +74,20 @@ android {
 }
 
 dependencies {
-	compileOnly("org.firstinspires.ftc:RobotCore:10.1.1")
-	compileOnly("org.firstinspires.ftc:Hardware:10.1.1")
-	compileOnly("org.firstinspires.ftc:FtcCommon:10.1.1")
-	compileOnly("org.firstinspires.ftc:RobotServer:10.1.1")
-	compileOnly("org.firstinspires.ftc:OnBotJava:10.1.1")
+	compileOnly("org.firstinspires.ftc:RobotCore:10.2.0")
+	compileOnly("org.firstinspires.ftc:Hardware:10.2.0")
+	compileOnly("org.firstinspires.ftc:FtcCommon:10.2.0")
+	compileOnly("org.firstinspires.ftc:RobotServer:10.2.0")
+	compileOnly("org.firstinspires.ftc:OnBotJava:10.2.0")
+
+
 
 	implementation("com.acmerobotics.dashboard:dashboard:0.4.16") {
 		exclude(group = "org.firstinspires.ftc")
 	}
 
 	implementation("org.apache.commons:commons-math3:3.6.1")
+	dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.9.20")
 	dokkaGfmPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.9.20")
 	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.20")
 }
@@ -84,7 +99,7 @@ publishing {
 		register<MavenPublication>("release") {
 			groupId = "com.pedropathing"
       artifactId = "local"
-			version = "1.0.6-local"
+			version = "1.0.8-local"
 
 			afterEvaluate {
 				from(components["release"])
