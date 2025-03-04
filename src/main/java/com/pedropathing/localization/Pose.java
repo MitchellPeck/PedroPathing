@@ -7,6 +7,8 @@ import androidx.annotation.NonNull;
 import com.pedropathing.pathgen.MathFunctions;
 import com.pedropathing.pathgen.Vector;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+
 /**
  * This is the Pose class. It defines poses in 2D space, like the Pose2D class in Road Runner except
  * in the Pedro Pathing code so I don't have to import the Road Runner library. A Pose consists of
@@ -21,6 +23,7 @@ public class Pose {
     private double y;
     private double heading;
     private boolean pedroCoordinates = true;
+    private static AngleUnit angleUnit = AngleUnit.RADIANS;
 
     /**
      * This creates a new Pose from a x, y, and heading inputs.
@@ -101,7 +104,7 @@ public class Pose {
      * @param set the heading value
      */
     public void setHeading(double set) {
-        heading = MathFunctions.normalizeAngle(set);
+        heading = angleUnit.toRadians(MathFunctions.normalizeAngle(set));
     }
 
     /**
@@ -129,6 +132,24 @@ public class Pose {
      */
     public double getHeading() {
         return heading;
+    }
+
+    /**
+     * This sets the angle unit.
+     *
+     * @param aU the angle unit
+     */
+    public static void setAngleUnit(AngleUnit aU) {
+        angleUnit = aU;
+    }
+
+    /**
+     * This returns the angle unit.
+     *
+     * @return the angle unit
+     */
+    public static AngleUnit getAngleUnit() {
+        return angleUnit;
     }
 
     /**

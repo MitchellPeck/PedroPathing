@@ -1,6 +1,7 @@
 package com.pedropathing.pathgen;
 
 import com.pedropathing.follower.FollowerConstants;
+import com.pedropathing.localization.HeadingTypes;
 import com.pedropathing.localization.Pose;
 
 import java.util.ArrayList;
@@ -124,6 +125,92 @@ public class Path {
     }
 
     /**
+     * This sets the heading interpolation to tangential.
+     */
+    public void setTangentHeadingInterpolation() {
+        isTangentHeadingInterpolation = true;
+        followTangentReversed = false;
+    }
+
+    /**
+     * This sets the heading interpolation to tangential when TANGENTIAL is passed for the headingType.
+     *
+     * @param headingType headingType to set. This method only works when TANGENTIAL is passed.
+     */
+    public void setHeadingInterpolation(HeadingTypes headingType) {
+        switch (headingType) {
+            case LINEAR:
+            case CONSTANT: {
+                throw new UnsupportedOperationException();
+            }
+            case TANGENTIAL: {
+                setTangentHeadingInterpolation();
+            }
+            break;
+        }
+    }
+
+    /**
+     * This sets the heading interpolation to tangential when CONSTANT is passed for the headingType.
+     *
+     * @param headingType headingType to set. This method only works when CONSTANT is passed.
+     * @param heading constant heading to follow.
+     */
+    public void setHeadingInterpolation(HeadingTypes headingType, double heading) {
+        switch (headingType) {
+            case LINEAR:
+            case TANGENTIAL: {
+                throw new UnsupportedOperationException();
+            }
+            case CONSTANT: {
+                setConstantHeadingInterpolation(heading);
+            }
+            break;
+        }
+    }
+
+    /**
+     * This sets the heading interpolation to tangential when LINEAR is passed for the headingType.
+     *
+     * @param headingType headingType to set. This method only works when LINEAR is passed.
+     * @param startHeading heading to start linear heading at.
+     * @param endHeading heading to end linear heading at.
+     */
+    public void setHeadingInterpolation(HeadingTypes headingType, double startHeading, double endHeading) {
+        switch (headingType) {
+            case LINEAR: {
+                setLinearHeadingInterpolation(startHeading, endHeading);
+            }
+            break;
+            case TANGENTIAL:
+            case CONSTANT: {
+                throw new UnsupportedOperationException();
+            }
+        }
+    }
+
+    /**
+     * This sets the heading interpolation to tangential when LINEAR is passed for the headingType.
+     *
+     * @param headingType headingType to set. This method only works when LINEAR is passed.
+     * @param startHeading heading to start linear heading at.
+     * @param endHeading heading to end linear heading at.
+     * @param endTime time to finish adjusting heading at.
+     */
+    public void setHeadingInterpolation(HeadingTypes headingType, double startHeading, double endHeading, double endTime) {
+        switch (headingType) {
+            case LINEAR: {
+                setLinearHeadingInterpolation(startHeading, endHeading, endTime);
+            }
+            break;
+            case TANGENTIAL:
+            case CONSTANT: {
+                throw new UnsupportedOperationException();
+            }
+        }
+    }
+
+    /**
      * This gets the closest Point from a specified pose to the BezierCurve with a Newton search
      * that is limited to some specified step limit.
      *
@@ -185,14 +272,6 @@ public class Path {
      */
     public boolean isReversed() {
         return followTangentReversed;
-    }
-
-    /**
-     * This sets the heading interpolation to tangential.
-     */
-    public void setTangentHeadingInterpolation() {
-        isTangentHeadingInterpolation = true;
-        followTangentReversed = false;
     }
 
     /**
