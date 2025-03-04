@@ -23,7 +23,7 @@ public class Pose {
     private double y;
     private double heading;
     private boolean pedroCoordinates = true;
-    private static AngleUnit angleUnit = AngleUnit.RADIANS;
+    public static AngleUnit angleUnit = AngleUnit.RADIANS;
 
     /**
      * This creates a new Pose from a x, y, and heading inputs.

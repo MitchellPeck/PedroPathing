@@ -3,7 +3,7 @@ package com.pedropathing.pathgen;
 import com.pedropathing.localization.Pose;
 
 public class SafePoint extends Point{
-    private static double frontLength = 0;
+    public static double frontLength = 0;
 
     /**
      * Set the front length of the robot chassis.
